@@ -1,4 +1,4 @@
-<p align="center"><img src="http://legatum-group.com/sag/public/images/logo3.png" style="width: 240px;"></p>
+<p align="center"><img src="http://legatum-group.com/sag/public/images/logo2.png"></p>
 
 <p align="center">
 
@@ -32,7 +32,7 @@ php artisan key:generate
 php artisan migrate
 ```
 
-Once the database files are migrated open up a CLI(cmd or powershell) and go to your working directory and create an admin:
+Once the database files are migrated it's time to create an admin:
 
 ```
 > php artisan tinker
