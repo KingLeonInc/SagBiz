@@ -89,6 +89,7 @@
       </div>
       <div class="col-md-9 col-lg-9">
           <div class="box box-success">
+              @include('admin.includes.admin_errors')
               <div class="box-header">
                   <h3 class="text-primary">Create A New {{ $results['title'] }}</h3>
               </div>

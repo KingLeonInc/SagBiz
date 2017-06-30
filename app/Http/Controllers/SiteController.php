@@ -14,7 +14,18 @@ use Yajra\Datatables\Datatables;
 use App\Mail\EventRegistration;
 use App\Mail\ContactSag;
 use Mail;
-
+/**
+ * @resource Site Controller
+ *
+ * You can use this API to access the following pages.
+ * - Welcome(Landing) Page
+ * - Services Page
+ * - Events 
+ * - Tradeshows 
+ * - Event/Tradeshow Registrations  
+ * - Gallery Page  
+ * - Contact Us  
+ */
 class SiteController extends Controller
 {
     public function returnEventsOrTradeshows($id)
@@ -88,6 +99,11 @@ class SiteController extends Controller
         ];
         return $results;
     }
+    /**
+     * Site Welcome page
+     *
+     * Website Landing page
+     */
     public function welcome()
     {
         if (Auth::check()) {
@@ -96,6 +112,11 @@ class SiteController extends Controller
         $results = $this->returnLatestEvents(3);
         return view('welcome', compact('results'));
     }
+    /**
+     * SAG Events
+     *
+     * Returns a Page containing <u>only</u> published(enabled) events.
+     */
     public function sagEvents()
     {
 		$page_title = "Event";
@@ -103,12 +124,22 @@ class SiteController extends Controller
 		$results = $this->returnEventsOrTradeshows(1);
 		return view('events', compact('page_title', 'results'));
     }
+    /**
+     * SAG Tradeshows
+     *
+     * Returns a Page containing <u>only</u> published(enabled) tradeshows.
+     */
     public function sagTradeshow()
     {
 		$page_title = "Tradeshow";
 		$results = $this->returnEventsOrTradeshows(2);
 		return view('events', compact('page_title', 'results'));
     }
+    /**
+     * Gallery
+     *
+     * Returns SAG Gallery Page.
+     */
     public function sagGallery()
     {
         $galleries = [
@@ -120,6 +151,13 @@ class SiteController extends Controller
         $no_gallery_photo = count($galleries['events']) + count($galleries['tradeshows']) + count($galleries['public_parks']) + count($galleries['txt_and_stationary']);
         return view('gallery', compact('galleries', 'no_gallery_photo'));
     }
+    /**
+     * Show Event/Tradeshow
+     *
+     * View a particular event/tradeshow given its event slug(event link). <br>
+     * \@param      string      $slug <br>
+     * \@return     void
+     */
     public function showEvent($slug)
     {
         $page_title = "";
@@ -134,6 +172,19 @@ class SiteController extends Controller
             return view('event', compact('page_title', 'results'));
         }
     }
+    /**
+     * Contact SAG Biz
+     *
+     * Contact Sag Biz, Message will be sent to contact@sag-biz.com <br>
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * senderName | string | required | Contact's Name  
+     * senderEmail | email | required | Contact's Email Address  
+     * message | string | required | Contact Message
+     */
     public function contactSag(Request $request)
     {
         $message = [
@@ -144,7 +195,7 @@ class SiteController extends Controller
         ];
         //Mail::to('kingleon2015@gmail.com')->send(new ContactSag($message));
 
-        $to = "kingleon2015@gmail.com";
+        $to = "contact@sag-biz.com"; // kingleon2015@gmail.com
         $subject = "Contact SAG Biz";
         $txt = $request->input('message');
         $headers = "From: ". $request->input('senderEmail') . "\r\n";// .
@@ -153,6 +204,22 @@ class SiteController extends Controller
         mail($to,$subject,$txt,$headers);
         return redirect('contact')->with('success', 'Thanks for contacting us. We\'ve recieved your message.');
     }
+    /**
+     * Register for an event/tradeshow
+     *
+     * Event/Tradeshow registration <br>
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * event_id | integer | required | Event/Tradeshow Id   
+     * event_type | string | required | `Event` or `Tradeshow`  
+     * senderName | string | required | Name of the Registrant
+     * senderEmail | email | required | Email Adress of the Registrant
+     * senderPhone | string | required | Phone Number of the Registrant
+     * senderCompany | string | optional | Company name(if any) of the Registrant
+     */
     public function registerForAnEvent(Request $request)
     {
         $response = array();
@@ -209,42 +276,40 @@ class SiteController extends Controller
             $to = $register->email;
             $subject = $request->input('event_type')." Registration.";
 
-            $message = '
-            <html>
-                <head>
-                    <title>'.$subject.'</title>
-                    <style>
-                        table {
-                            border-collapse: collapse;
-                            width: 100%;
-                        }
-                        
-                        th, td {
-                            padding: 8px;
-                            text-align: left;
-                            border-bottom: 1px solid #ddd;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <p>Thanks for registering to this '.$request->input('event_type').'!</p>
-                    <table>
-                        <tr>
-                            <th>'.$request->input('event_type').'</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Price</th>
-                        </tr>
-                        <tr>
-                            <td>'.$event->title.'</td>
-                            <td>'.Carbon::parse($event->start_date)->format('m/d/Y').'</td>
-                            <td>'.Carbon::parse($event->end_date)->format('m/d/Y').'</td>
-                            <td>ETB '.$event->price.'</td>
-                        </tr>
-                    </table>
-                </body>
-            </html>
-            ';
+            $message = '<html>
+                            <head>
+                                <title>'.$subject.'</title>
+                                <style>
+                                    table {
+                                        border-collapse: collapse;
+                                        width: 100%;
+                                    }
+                                    
+                                    th, td {
+                                        padding: 8px;
+                                        text-align: left;
+                                        border-bottom: 1px solid #ddd;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <p>Thanks for registering to this '.$request->input('event_type').'!</p>
+                                <table>
+                                    <tr>
+                                        <th>'.$request->input('event_type').'</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    <tr>
+                                        <td>'.$event->title.'</td>
+                                        <td>'.Carbon::parse($event->start_date)->format('m/d/Y').'</td>
+                                        <td>'.Carbon::parse($event->end_date)->format('m/d/Y').'</td>
+                                        <td>ETB '.$event->price.'</td>
+                                    </tr>
+                                </table>
+                            </body>
+                        </html>';
 
             // Always set content-type when sending HTML email
             $headers = "MIME-Version: 1.0" . "\r\n";
@@ -259,6 +324,18 @@ class SiteController extends Controller
 
         return view('registrations', compact('response'));
     }
+    /**
+     * Newsletter Subscription
+     *
+     * Subscribe to a weekly/montly newsletter <br>
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * email | email | required | Subscription Email Address   
+     * name | string | optional | Subscribers's name
+     */
     public function newsletterSubscription(Request $request)
     {
         //return $request->all();

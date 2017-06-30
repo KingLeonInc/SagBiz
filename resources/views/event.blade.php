@@ -147,6 +147,7 @@
 			<div class="span8 posts">
 				<div class="def-block">
 					<div class="post row-fluid clearfix">
+						@include('includes.site_errors')
 						@if($results['event_status'] == 'upcoming')
 							<div class="span7">
 								<h3 class="post-title"> 
@@ -217,6 +218,7 @@
 							<div class="clearfix"></div><br>
 							{!! Form::open(['url'=>'register-for-an-event', 'id'=>'contactForm2'])!!}
 								<div class="clearfix">
+									@include('includes.site_errors')
 									<div class="grid_6 alpha fll">
 										<label>Full Name*</label>
 										<input type="text" name="senderName" id="" placeholder="Name *" class="requiredField" style="display: block; width:100%;" required />

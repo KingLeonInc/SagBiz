@@ -9,12 +9,12 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-use Illuminate\Support\Facades\Storage;
+/*use Illuminate\Support\Facades\Storage;
 Route::get('samp', function(){
 	//$files = Storage::disk('gallery')->files('events');
 	$sal = array('one', 'two', 'three');
 	return implode(',', $sal);
-});
+});*/
 Route::get('/', 'SiteController@welcome');
 
 Route::get('services', function () {

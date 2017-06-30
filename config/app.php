@@ -181,6 +181,7 @@ return [
 
         Yajra\Datatables\DatatablesServiceProvider::class,
         Cviebrock\EloquentSluggable\ServiceProvider::class,
+        Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class
 
     ],
 

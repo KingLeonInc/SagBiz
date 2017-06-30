@@ -21,6 +21,7 @@
 			
 			<div class="row row-fluid clearfix mbf">
 				<div class="span8 posts">
+					@include('includes.site_errors')
 					@if(session('success'))
 						<div class="def-block clearfix">
 							<div class="notification-box notification-box-success">
@@ -31,7 +32,7 @@
 					@endif
 					<div class="def-block clearfix">
 						<h4> Contact With US </h4><span class="liner"></span>
-						<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. </p>
+						<p>Our customer support teams provide the best service in the industry. We're passionate about our products as well as our coustomers and it shows in the level of service that we provide. We're always happy to help find the solution for your needs. If a solution doesn't already exist, we'll create a new solution that resolves your issue. </p>
 						{!! Form::open(['id'=>'contactForm']) !!}
 							<div class="clearfix">
 								<div class="grid_6 alpha fll"><input type="text" name="senderName" id="senderName" placeholder="Name *" class="requiredField" required /></div>
@@ -52,7 +53,7 @@
 								<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d63052.4200856315!2d38.85214739999999!3d8.99272485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sam!2set!4v1494193006700" width="100%" height="250" frameborder="0" style="border:0" allowfullscreen></iframe>
 							</div>
 							<!-- <div id="map" class="mb"></div> -->
-							<p>It has survived not only five centuries, but also the leap into electronic typesetting.</p>
+							<p>We're friendly and available to chat, Reach out to us any time and we'll happily answer your questions.</p>
 							<p>Phone: <strong>  +251-91-121-5028 </strong> <br> Email: <strong> contact@sag-biz.com</strong></p>
 						</div><!-- widget content -->
 					</div><!-- def block widget details -->

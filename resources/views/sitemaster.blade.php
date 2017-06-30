@@ -78,21 +78,7 @@
 
 <script>
 	jQuery(document).ready(function($){
-		var version = 'dark';
-		var twelve_hrs = 12*60*60*1000;
-		//var time = new Date();
-		setInterval(function(){
-			//console.log('Hrs = ' + time.getHours());
-			if( version == 'light' ){
-				//$('head').append('<link rel="stylesheet" type="text/css" href="/laravel_5.4/sag/public/styles/light.css" id="light" media="screen" />');
-				//$('.logo a').html('<img src="images/logo_light.png" alt="Best and Most Popular Musics">');
-				//version = 'dark';
-			} else if(version == 'dark') {
-				$('head #light').remove();
-				//$('.logo a').html('<img src="images/logo.png" alt="Best and Most Popular Musics">');
-				//version = 'light';
-			}
-		}, 10000);
+		console.log('{{ csrf_token() }}');
 		/* LOGIN A USER */
 		$('#popup_login_form').submit(function(e){
 			e.preventDefault();

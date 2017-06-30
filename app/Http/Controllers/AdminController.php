@@ -13,7 +13,15 @@ use Carbon\Carbon;
 use Yajra\Datatables\Datatables;
 use App\Mail\MassMail;
 use Mail;
-
+/**
+ * @resource Admin Controller
+ *
+ * By accessing the endpoints on this API you can 
+ * - Access the admin dashboard 
+ * - Create/Update/Delete Events/Tradeshows
+ * - Create/Update/Delete Photo/Video Ads
+ * - Upload/Delete Gallery Images
+ */
 class AdminController extends Controller
 {
     public function getDashboardData()
@@ -184,6 +192,11 @@ class AdminController extends Controller
         ];
         return $results;
     }
+    /**
+     * Admin Dashboard
+     *
+     * Admin Dashboard(Landing page).
+     */
     public function index()
     {
     	$page = "home";
@@ -206,21 +219,41 @@ class AdminController extends Controller
         $results = $this->getDashboardData();
     	return view('admin.dashboard', compact('results'));
     }
+    /**
+     * Admin Events
+     *
+     * Returns a Page containing <strong><u>all</u></strong> published(enabled) events.
+     */
     public function events()
     {
         $results = $this->getEvents(1);
         return view('admin.events', compact('results'));
     }
+    /**
+     * Admin Tradeshows
+     *
+     * Returns a Page containing <strong><u>all</u></strong> published(enabled) tradeshows.
+     */
     public function tradeshows()
     {
     	$results = $this->getEvents(2);
         return view('admin.events', compact('results'));
     }
+    /**
+     * Admin Ads
+     *
+     * Returns a Page containing all sag ads.
+     */
     public function ads()
     {
         $results = $this->getAds();
         return view('admin.ads', compact('results'));
     }
+    /**
+     * Admin Gallery
+     *
+     * Returns a Page containing all sag gallery photos.
+     */
     public function gallery()
     {
         $galleries = [
@@ -231,26 +264,68 @@ class AdminController extends Controller
         ];
         return view('admin.gallery', compact('galleries'));
     }
+    /**
+     * Subscribers
+     *
+     * Returns a Page containing all sag subscribers.
+     */
     public function subscribers()
     {
         $results = $this->getDashboardData();
         return view('admin.subscribers', compact('results'));
     }
+    /**
+     * Create Event Page
+     *
+     * Returns a Page(with recently created events) where you can create a new event.
+     */
     public function createEventIndex()
     {
         $results = $this->getRecentEvents(1);
         return view('admin.event.create_event', compact('results'));
     }
+    /**
+     * Create Tradeshow Page
+     *
+     * Returns a Page(with recently created tradeshows) where you can create a new tradeshow.
+     */
     public function createTradeshowIndex()
     {
         $results = $this->getRecentEvents(2);
         return view('admin.event.create_event', compact('results'));
     }
+    /**
+     * Create Ads Page
+     *
+     * Returns a Page(with recently created ads) where you can create a new photo or video ad.
+     */
     public function createAdsIndex()
     {
         $results = $this->getRecentAds();
         return view('admin.ad.create_or_update_ad', compact('results'));
     }
+    /**
+     * Create or Update Event/Tradeshow
+     *
+     * Create a New Event/Tradeshow or Update Existing One
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * create_or_update | string | required | `create` Or `update`  
+     * title | string | required | Event or Tradeshow Title  
+     * summary | string | required | A brief summary/overview of Event or Tradeshow  
+     * description | string | required | A complete description of Event or Tradeshow  
+     * event_type | string | required | `1` Or `2` , `1` => Event, `2` => Tradeshow  
+     * new_event_image | image | optional | Must be an image (jpeg, png, bmp, gif, or svg)
+     * event_host | integer | required
+     * event_start_and_end_date | string | required | eg `06/24/2017 12:00 AM - 06/30/2017 11:59 PM`
+     * price | integer | required
+     * availability | string | required | `limited` or `unlimited`
+     * max_guest | integer | required | Required if availability is `limited` 
+     * 
+     */
     public function createOrUpdateEvent(Request $request)
     {
         //return $request->all();
@@ -347,6 +422,24 @@ class AdminController extends Controller
             //'event' => $created_event
         ]);
     }
+    /**
+     * Create or Update Ads
+     *
+     * Create a New Photo/Video Ad or Update Existing One <br>
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * create_or_update | string | required | `create` Or `update`  
+     * ad_title | string | required | Photo or Video Ad Title  
+     * ad_type | string | required | `photo` Or `video` , Photo Ad or Video Ad  
+     * ad_link | string | required | Complete Ad Link eg. `https://example.com/ads`  
+     * ad_background_image | image | required | Ad Background Image. Must be an image (jpeg, png, bmp, gif, or svg)  
+     * add_start_and_end_date | string | required | Ad start date - Ad end date. eg `06/24/2017 12:00 AM - 06/30/2017 11:59 PM`
+     * ad_video_link | string | optional | Video Ad Link, required if `ad_type` is `video` eg. `https://www.youtube.com/watch?v=ahjSt68Rtvc`  
+     * ad_id | integer | optional | Ad ID. Required if `create_or_update` is `update`  
+     */
     public function createOrUpdateAd(Request $request)
     {
         if ($request->input('create_or_update') == 'create') {
@@ -357,7 +450,7 @@ class AdminController extends Controller
                 $fileType = $ad_back_img->getClientMimeType();
                 // CHECK FOR IMAGE FILE
                 $checkFile = explode('.', $fileName);
-                if (strtolower(end($checkFile)) == 'jpg' || strtolower(end($checkFile)) == 'jpeg' || strtolower(end($checkFile)) == 'png' || strtolower(end($checkFile)) == 'gif') {
+                if (strtolower(end($checkFile)) == 'jpg' || strtolower(end($checkFile)) == 'jpeg' || strtolower(end($checkFile)) == 'png' || strtolower(end($checkFile)) == 'gif' || strtolower(end($checkFile)) == 'bmp' || strtolower(end($checkFile)) == 'svg') {
                     
                     // IF VIDEO AD THEN CHECK FOR VIDEO LINK
                     if ($request->input('ad_type') == 'video') {
@@ -492,12 +585,16 @@ class AdminController extends Controller
             'msg' => "Can't update ad now!. Please try again later"
         ]);
     }
+    /**
+     * View particular Event
+     *
+     * Show details of a single event <br>
+     * \@param      string      $event_slug <br>
+     * \@param      string      $show_tab <br>
+     * \@return     void
+     */
     public function showEvent($event_slug, $show_tab='event')
     {
-        //return "Hello world";
-        /*if (isset($event)) { 
-            unset($event);
-        }*/
         $event = Event::findBySlug($event_slug);
         if (is_null($event)) {
             //abort(404);
@@ -507,6 +604,14 @@ class AdminController extends Controller
             return view('admin.event.update_event', compact('results'));
         }
     }
+    /**
+     * View particular Tradeshow
+     *
+     * Show details of a single tradeshow <br>
+     * \@param      string      $event_slug <br>
+     * \@param      string      $show_tab <br>
+     * \@return     void
+     */
     public function showTradeshow($event_slug, $show_tab = 'event')
     {
         $event = Event::findBySlug($event_slug);
@@ -517,6 +622,14 @@ class AdminController extends Controller
             return view('admin.event.update_event', compact('results'));
         }
     }
+    /**
+     * View particular Ad
+     *
+     * Show details of a single ad <br>
+     * \@param      string      $event_slug <br>
+     * \@param      string      $show_tab <br>
+     * \@return     void
+     */
     public function showAd($ad_id)
     {
         $ad = Ad::find($ad_id);
@@ -527,6 +640,19 @@ class AdminController extends Controller
             return view('admin.ad.create_or_update_ad', compact('results'));
         }
     }
+    /**
+     * Upload Event/Tradeshow Images
+     *
+     * Upload new images for an existing events/tradeshows <br>
+     * \@param      Request      $request <br>
+     * \@param      String      $event_slug <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * sag_event_id | integer | required | Event/Tradeshow Id for which this image is going to be uploaded  
+     * file | image | required | Event/Tradeshow Photo. Must be an image (jpeg, png, bmp, gif, or svg) 
+     */
     public function storeEventImages(Request $request, $event_slug)
     {
         //return $event_slug;
@@ -544,7 +670,12 @@ class AdminController extends Controller
             $fileType = $file->getClientMimeType();
             // CHECK FOR EXCEL FILE
             $checkFile = explode('.', $fileName);
-            if (strtolower(end($checkFile)) == 'jpg' || strtolower(end($checkFile)) == 'jpeg' || strtolower(end($checkFile)) == 'png' || strtolower(end($checkFile)) == 'gif') {
+            if (strtolower(end($checkFile)) == 'jpg' || 
+                strtolower(end($checkFile)) == 'jpeg' || 
+                strtolower(end($checkFile)) == 'png' || 
+                strtolower(end($checkFile)) == 'bmp' || 
+                strtolower(end($checkFile)) == 'svg' || 
+                strtolower(end($checkFile)) == 'gif') {
                 $fileBaseName = basename($fileName, '.'.end($checkFile)).'.'.end($checkFile);
                 
                 $path = public_path('/sag-events/'.$event->event_id.'/images/');
@@ -570,6 +701,18 @@ class AdminController extends Controller
             ]);
         }
     }
+    /**
+     * Upload Gallery Images
+     *
+     * Upload new images to Photo Gallery <br>
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * gallery_type | string | required | `events` or `tradeshows` or `public-parks` or `textile-and-stationary-products`  
+     * file | image | required | Photo. Must be an image (jpeg, png, bmp, gif, or svg) 
+     */
     public function uploadGalleryImages(Request $request)
     {
         //return $request->all();
@@ -581,7 +724,12 @@ class AdminController extends Controller
         $fileType = $file->getClientMimeType();
         // CHECK FOR EXCEL FILE
         $checkFile = explode('.', $fileName);
-        if (strtolower(end($checkFile)) == 'jpg' || strtolower(end($checkFile)) == 'jpeg' || strtolower(end($checkFile)) == 'png' || strtolower(end($checkFile)) == 'gif') {
+        if (strtolower(end($checkFile)) == 'jpg' || 
+            strtolower(end($checkFile)) == 'jpeg' || 
+            strtolower(end($checkFile)) == 'png' || 
+            strtolower(end($checkFile)) == 'bmp' || 
+            strtolower(end($checkFile)) == 'svg' || 
+            strtolower(end($checkFile)) == 'gif') {
             $fileBaseName = basename($fileName, '.'.end($checkFile));
             
             $path = public_path('/sag-galleries/'.$gallery_type.'/');
@@ -607,6 +755,22 @@ class AdminController extends Controller
             'msg' => "Please Choose Image files only!"
         ]);
     }
+    /**
+     * Create Event/Tradeshow Host
+     *
+     * Create A Host for an event/tradeshow. This represents `hosted by` sections on the website. <br>
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * name | string | required | Host Name  
+     * company | string | required | Host's Company Name  
+     * phone | string | required | Phone number of the host  
+     * email | email | required | Email of the host  
+     * address | text | optional | Address of the host  
+     * additional_info | text | optional | Any other information about the host 
+     */
     public function createNewHost(Request $request)
     {
         //return ($request->input('address') == "") ? "ya" : $request->all();
@@ -636,6 +800,18 @@ class AdminController extends Controller
         }
     }
     // DELETE
+    /**
+     * Delete Event/Tradeshow Image
+     *
+     * Delete an image for an existing event/tradeshow <br>
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * event | integer | required | Event/Tradeshow Id  
+     * img2delete | string | required | Name of Event/Tradeshow Image that's is going to be removed  
+     */
     public function deleteEventImage(Request $request)
     {
         //return $request->all();
@@ -660,6 +836,17 @@ class AdminController extends Controller
             'msg' => 'Cannot delete Image. Event not found.'
         ]);
     }
+    /**
+     * Delete Gallery Images
+     *
+     * Delete Photo Gallery Images <br>
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * img2delete | string | required | Name of the Image that's is going to be removed  
+     */
     public function deleteGalleryImage(Request $request)
     {
         $img2delete = $request->input('img2delete');
@@ -676,6 +863,13 @@ class AdminController extends Controller
             'msg' => 'Image Not Found!'
         ]);
     }
+    /**
+     * Delete Users Registered for an Event/Tradeshow
+     *
+     * Delete Event/Tradeshow Registred Members <br>
+     * \@param      integer      $reg_id <br>
+     * \@return     json 
+     */
     public function deleteEventReg($reg_id)
     {
         $reg = EventReg::find($reg_id);
@@ -691,6 +885,13 @@ class AdminController extends Controller
             'msg' => 'Member deleted.'
         ]);
     }
+    /**
+     * Delete an Event/Tradeshow
+     *
+     * Permanently Delete Event/Tradeshow <br>
+     * \@param      integer      $event_id <br>
+     * \@return     json 
+     */
     public function deleteEvent($event_id)
     {
         $event = Event::find($event_id);
@@ -711,6 +912,13 @@ class AdminController extends Controller
             'msg' => 'Event deleted.'
         ]);
     }
+    /**
+     * Delete Ad
+     *
+     * Permanently Delete Photo or Video Ads <br>
+     * \@param      integer      $ad_id <br>
+     * \@return     json 
+     */
     public function deleteSagAd($ad_id)
     {
         $ad = Ad::find($ad_id);
@@ -730,6 +938,13 @@ class AdminController extends Controller
             'msg' => 'Ad successfully deleted!'
         ]);
     }
+    /**
+     * Delete Subscribers
+     *
+     * Permanently Delete Subscriber <br>
+     * \@param      integer      $sub_id <br>
+     * \@return     json 
+     */
     public function deleteSubscriber($sub_id)
     {
         $subscriber = Subscription::find($sub_id);
@@ -746,6 +961,17 @@ class AdminController extends Controller
         ]);
     }
     // SEARCH
+     /**
+     * Search For an Event/Tradeshow 
+     *
+     * Search for an event/tradeshow using keywords. <br>
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * search | string | required | Search Keyword  
+     */
     public function searchSAG(Request $request)
     {
         $keyword = $request->input('search');
@@ -758,6 +984,13 @@ class AdminController extends Controller
         return view('admin.search', compact('results'));
     }
     // DATATABLES
+    /**
+     * Datatables - Get All Event/Tradeshows 
+     *
+     * Fetch all event/tradeshows in a table. <br>
+     * \@param      integer      $event_type <br>
+     * \@return     json 
+     */
     public function dtGetAllEvents($ev_type)
     {
         $events = Event::where('event_type', $ev_type)->get();
@@ -799,6 +1032,12 @@ class AdminController extends Controller
                 ->rawColumns(['title', 'status', 'date_range', 'action'])
                 ->make(true);
     }
+    /**
+     * Datatables - Get All Ads 
+     *
+     * Fetch all Photo and Video Ads in a table. <br>
+     * \@return     json 
+     */
     public function dtGetAllAds()
     {
         $ads = Ad::latest()->get();
@@ -828,6 +1067,13 @@ class AdminController extends Controller
                             ->rawColumns(['ad_title', 'date_range', 'status', 'action'])
                             ->make(true);
     }
+    /**
+     * Datatables - Get All Event/Tradeshow Registred members
+     *
+     * Fetch all users registred for a particular event in a table. <br>
+     * \@param      integer      $event_id <br>
+     * \@return     json 
+     */
     public function dtEventRegs($event_id)
     {
         $regs = EventReg::where('event_id', $event_id)->latest()->get();
@@ -841,6 +1087,12 @@ class AdminController extends Controller
                             ->rawColumns(['action'])
                             ->make(true);
     }
+    /**
+     * Datatables - Get All Subscribers 
+     *
+     * Fetch all event/tradeshows in a table. <br>
+     * \@return     json 
+     */
     public function dtSubscribers()
     {
         $subscribers = Subscription::all();
@@ -858,6 +1110,20 @@ class AdminController extends Controller
                             ->make(true);
     }
     // EMAILS
+    /**
+     * Send Mass Mail
+     *
+     * Mass Mail to event/tradeshow registred users
+     * \@param      Request      $request <br>
+     * \@return     void
+     * ### Parameters
+     * Parameter | Type | Status | Description 
+     * --------- | ------- | ------- | ------- 
+     * event_id | integer | required | Event or Tradehsow Id  
+     * subject | string | required | Mail Subject
+     * message | text | required | Mail Body 
+     * 
+     */
     public function sendMassEmail(Request $request)
     {
         $mail_to = EventReg::where('event_id', $request->input('event_id'))->first();
